@@ -174,13 +174,21 @@ func findByDirectory(ctx context.Context, dir string) error {
 func renderTable(files []*models.File) {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetBorder(true)
-	table.SetHeader([]string{"File", "In Maven Repo"})
+	table.SetHeader([]string{"File", "In Maven Repo", "Group ID", "Artifact ID", "Version"})
 	table.SetAlignment(tablewriter.ALIGN_CENTER)
 	for _, f := range files {
-		table.Append([]string{
+		row := []string{
 			f.Info.Name(),
 			if_expression.Return(f.ExistsMaven(), color.GreenString("Y"), color.RedString("N")),
-		})
+		}
+		if f.Version != nil {
+			row = append(row, f.Version.GroupId)
+			row = append(row, f.Version.ArtifactId)
+			row = append(row, f.Version.Version)
+		} else {
+			row = append(row, "", "", "")
+		}
+		table.Append(row)
 	}
 	table.Render()
 }

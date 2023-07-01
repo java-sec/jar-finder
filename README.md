@@ -8,7 +8,7 @@
 
 - 找出一堆`Jar`包中哪些是在`Maven`中央仓库上的，哪些是在自定义的包
 
-比如我们要逆向分析一个`Java`应用，找到了与这个Java应用相关的一堆`Jar`包，但是这些`Jar`包中哪些是有分析价值的呢？公共的依赖包对于逆向分析的帮助不大（我们看了半天才发现是一个公共包岂不是日了狗），应用自己的`Jar`包对我们的帮助会比较大，而通常情况下应用自己的`Jar`包是不会托管到`Maven`仓库中的（当然也有一些例外），我们可以借助此工具大致把有分析价值的包区分出来。
+比如我们要逆向分析一个`Java`应用，找到了与这个`Java`应用相关的一堆`Jar`包，但是这些`Jar`包中哪些是有分析价值的呢？公共的依赖包对于逆向分析的帮助不大（我们看了半天才发现是一个公共包岂不是日了狗），应用自己的`Jar`包对我们的帮助会比较大，而通常情况下应用自己的`Jar`包是不会托管到`Maven`仓库中的（当然也有一些例外），我们可以借助此工具大致把有分析价值的包区分出来。
 
 # 二、下载安装
 
@@ -16,7 +16,7 @@ release页面下载或者自己go get仓库编译
 
 # 三、使用示例
 
-![image-20230701235304318](C:/Program%20Files/Typora/image-20230701235304318.png)
+![image-20230701235304318](README.assets/image-20230701235304318-16882279742313.png)
 
 查找给定的jar包在Maven仓库中的GAV：
 
@@ -26,9 +26,7 @@ jar-finder.exe find --jar ./test_data/commons-lang3-3.8.jar
 
 结果：
 
-![image-20230701235554867](README.assets/image-20230701235554867.png)
-
-
+![image-20230702001649080](README.assets/image-20230702001649080.png)
 
 
 
@@ -38,9 +36,9 @@ jar-finder.exe find --jar ./test_data/commons-lang3-3.8.jar
 jar-finder.exe find -d ./test_data
 ```
 
-![image-20230701235811593](README.assets/image-20230701235811593.png)
+![image-20230702001753717](README.assets/image-20230702001753717.png)
 
-![image-20230701235827202](README.assets/image-20230701235827202.png)
+![image-20230702001807925](README.assets/image-20230702001807925.png)
 
 在查询的时候并将结果输出为pom.xml的形式： 
 
