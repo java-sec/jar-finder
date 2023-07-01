@@ -2,13 +2,11 @@ package crawler
 
 import (
 	"context"
-	"crypto/sha1"
-	"fmt"
+	"github.com/java-sec/jar-finder/pkg/jar_util"
 	"github.com/java-sec/jar-finder/pkg/models"
 
 	"github.com/scagogogo/sonatype-central-sdk/pkg/api"
 	"io/fs"
-	"os"
 	"path/filepath"
 	"strings"
 )
@@ -25,14 +23,10 @@ func FindByDirectory(ctx context.Context, directory string, handler models.FileH
 		}
 		if strings.HasSuffix(strings.ToLower(info.Name()), ".jar") {
 			// 计算jar包的sha1
-			jarBytes, err := os.ReadFile(path)
+			jarSha1, err := jar_util.JarSha1(info.Name())
 			if err != nil {
 				return err
 			}
-			h := sha1.New()
-			h.Write([]byte(jarBytes))
-			bs := h.Sum(nil)
-			jarSha1 := fmt.Sprintf("%x", bs)
 			versions, err := api.SearchBySha1(ctx, jarSha1, 1)
 			if err != nil {
 				return err
@@ -67,22 +61,22 @@ func FindByDirectory(ctx context.Context, directory string, handler models.FileH
 //	})
 //}
 
-// FindMavenRepositoryNotExists 找到给定目录下的jar包中没有托管在Maven中央仓库的
-func FindMavenRepositoryNotExists(ctx context.Context, directory string) ([]*models.File, error) {
-	files := make([]*models.File, 0)
-	FindByDirectory(ctx, directory, func(ctx context.Context, file *models.File) error {
-		//if file.IsDirectory() {
-		//	return nil
-		//} else if !file.IsJarFile() {
-		//	color.Black("File %s is not jar file, so ignored it.", file.Info.Name())
-		//} else if file.ExistsMaven() {
-		//	color.Green("File %s exists in maven repo, groupId = %s, artifactId = %s, version = %s",
-		//		file.Info.Name(), file.Version.GroupId, file.Version.ArtifactId, file.Version.Version)
-		//} else {
-		//	color.Red("File %s not exists maven repo, it may be custom jar.", file.Info.Name())
-		//}
-		files = append(files, file)
-		return nil
-	})
-	return files, nil
-}
+//// FindMavenRepositoryNotExists 找到给定目录下的jar包中没有托管在Maven中央仓库的
+//func FindMavenRepositoryNotExists(ctx context.Context, directory string) ([]*models.File, error) {
+//	files := make([]*models.File, 0)
+//	FindByDirectory(ctx, directory, func(ctx context.Context, file *models.File) error {
+//		//if file.IsDirectory() {
+//		//	return nil
+//		//} else if !file.IsJarFile() {
+//		//	color.Black("File %s is not jar file, so ignored it.", file.Info.Name())
+//		//} else if file.ExistsMaven() {
+//		//	color.Green("File %s exists in maven repo, groupId = %s, artifactId = %s, version = %s",
+//		//		file.Info.Name(), file.Version.GroupId, file.Version.ArtifactId, file.Version.Version)
+//		//} else {
+//		//	color.Red("File %s not exists maven repo, it may be custom jar.", file.Info.Name())
+//		//}
+//		files = append(files, file)
+//		return nil
+//	})
+//	return files, nil
+//}
