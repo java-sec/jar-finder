@@ -1,3 +1,5 @@
 .idea
 *.exe
 test_result
+test_data
+/pom.xml

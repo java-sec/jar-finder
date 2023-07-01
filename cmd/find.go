@@ -32,9 +32,9 @@ var (
 
 func init() {
 	// 指定要扫描的目录
-	custom.PersistentFlags().StringVarP(&dir, "dir", "d", "./", "Specify the directory where the jar packages you want to look in the maven central repository are located")
+	custom.PersistentFlags().StringVarP(&dir, "dir", "d", "", "Specify the directory where the jar packages you want to look in the maven central repository are located")
 	custom.PersistentFlags().StringVarP(&jar, "jar", "j", "", "Specify the path to the jar packages you want to find in Maven's central repository")
-	custom.PersistentFlags().StringVarP(&jar, "pom", "p", "", "Output the pom.xml to path, example: pom.xml")
+	custom.PersistentFlags().StringVarP(&pom, "pom", "p", "", "Output the pom.xml to path")
 	rootCmd.AddCommand(custom)
 }
 
@@ -100,7 +100,12 @@ func findByJar(ctx context.Context, jarPath string) error {
 		}
 		files = append(files, file)
 	}
+
 	renderTable(files)
+	if len(files) > 0 && pom != "" {
+		return OutputPomXMl(pom, files)
+	}
+
 	return nil
 }
 
@@ -165,11 +170,12 @@ func findByDirectory(ctx context.Context, dir string) error {
 	return nil
 }
 
+// 表格渲染结果
 func renderTable(files []*models.File) {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetBorder(true)
 	table.SetHeader([]string{"File", "In Maven Repo"})
-	table.SetColumnAlignment([]int{tablewriter.ALIGN_CENTER})
+	table.SetAlignment(tablewriter.ALIGN_CENTER)
 	for _, f := range files {
 		table.Append([]string{
 			f.Info.Name(),
@@ -182,11 +188,10 @@ func renderTable(files []*models.File) {
 // OutputPomXMl 把查询结果输出为pom.xml文件
 func OutputPomXMl(pomPath string, files []*models.File) error {
 
-	err := os.MkdirAll(filepath.Dir(pomPath), os.ModePerm)
-	if err != nil {
-		return err
-	}
+	// 目录不存在时自动创建
+	_ = os.MkdirAll(filepath.Dir(pomPath), os.ModePerm)
 
+	// 然后开始构建pom.xml文件并写入到指定位置，如果文件已经存在的话则会覆盖掉
 	pomXMl := pom_util.BuildPomXml(files)
 	file, err := os.OpenFile(pom, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
 	if err != nil {

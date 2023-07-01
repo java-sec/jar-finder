@@ -26,7 +26,7 @@ func BuildPomXml(files []*models.File) string {
 
 	dependencies.WriteString(`
 
-<-- Below are local dependencies -->
+        <-- Below are local dependencies -->
 
 `)
 
